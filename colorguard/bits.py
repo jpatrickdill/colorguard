@@ -87,6 +87,35 @@ class Bits(object):
 
             return Bits(1 if (self.value & pos) else 0)
 
+    def __setitem__(self, item, value):
+        if isinstance(item, slice):
+            start = item.start or 0
+            stop = item.stop or self.value.bit_length()
+
+            if stop < 0:
+                stop = self.value.bit_length() + stop
+
+            span = stop - start
+            mask = 2 ** span - 1
+
+            offset = self.value.bit_length() - stop
+
+            if offset < 0:
+                raise ValueError("Bit range {}:{} to large for {!r}".format(start, stop, self))
+
+            return Bits((self.value & (mask << offset)) >> offset)
+
+        elif isinstance(item, int):
+            nv = 2**item-1
+            nv <<= 1
+            nv |= (1 if value > 0 else 0)
+
+            _s = self.value.bit_length()-item-1
+            nv <<= _s
+            nv |= 2**(_s)-1
+
+            return Bits(nv)
+
     def __eq__(self, other):
         return self.value == float(other)
 
@@ -140,3 +169,10 @@ class Bits(object):
 
     def __or__(self, other):
         return Bits(self.value | other)
+
+    def join(self, other):
+        other = int(other)
+
+        shifted = self.value << other.bit_length()
+
+        return Bits(shifted+other)
