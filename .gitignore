@@ -2,3 +2,5 @@ tests.py
 /.idea/
 */__pycache__/
 /__pycache__/
+/colorguard.egg-info/
+/dist/

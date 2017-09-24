@@ -104,10 +104,11 @@ class Bits(object):
             return Bits(1 if (self.value & pos) else 0)
 
     def __setitem__(self, item, value):
-
-        if isinstance(value, list):  # list of bits given
+        if type(value) in (list, tuple):  # list of bits given
             value_bits = "".join(map(str, value))
             value = int(value_bits, 2)
+
+        value = int(value)
 
         if isinstance(item, slice):
             start = 0 if item.start is None else item.start
@@ -351,6 +352,10 @@ class PaddedBits(Bits):
         return PaddedBits(shifted | other, self.bits + other.bit_length())
 
     def __getitem__(self, item):
+        if isinstance(item, list):  # list of bits given
+            value_bits = "".join(map(str, item))
+            item = int(value_bits, 2)
+
         if isinstance(item, slice):
             start = 0 if item.start is None else item.start
             stop = self.bits if item.stop is None else item.stop
@@ -369,7 +374,9 @@ class PaddedBits(Bits):
 
             return PaddedBits((self.value & mask) >> mask_shift, span)
 
-        elif isinstance(item, int):
+        elif not isinstance(item, float):
+            item = int(item)
+
             if item < 0:
                 item += self.bits
 
@@ -379,6 +386,12 @@ class PaddedBits(Bits):
             return PaddedBits(list(self)[item], 1)
 
     def __setitem__(self, item, value):
+        if type(value) in (list, tuple):  # list of bits given
+            value_bits = "".join(map(str, value))
+            value = int(value_bits, 2)
+
+        value = int(value)
+
         if isinstance(item, slice):
             start = 0 if item.start is None else item.start
             stop = self.bits if item.stop is None else item.stop

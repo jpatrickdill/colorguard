@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name="colorguard",
-    version="0.1",
+    version="0.1a4",
     packages=["colorguard"],
     url="http://github.com/reshanie/colorguard",
     license="MIT",
