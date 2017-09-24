@@ -96,6 +96,11 @@ class Bits(object):
             return Bits(1 if (self.value & pos) else 0)
 
     def __setitem__(self, item, value):
+
+        if isinstance(value, list):  # list of bits given
+            value_bits = "".join(map(str, value))
+            value = int(value_bits, 2)
+
         if isinstance(item, slice):
             start = 0 if item.start is None else item.start
             stop = self.value.bit_length() if item.stop is None else item.stop
@@ -121,13 +126,19 @@ class Bits(object):
             if item >= self.bit_length():
                 raise KeyError("{!r} not in bit range for {}".format(item, self.value))
 
+            if value not in (0, 1):
+                raise ValueError("Single bit must be either 0 or 1")
+
             nv = self[:item] << 1
-            nv |= (1 if value > 0 else 0)
+            nv |= value
 
             nv <<= self.bit_length() - item-1
             nv |= (self[item+1:]).value
 
             self.value = nv.value
+
+    def __iter__(self):
+        return iter(map(int, bin(self.value)[2:]))
 
     def __eq__(self, other):
         return self.value == float(other)
