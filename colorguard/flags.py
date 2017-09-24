@@ -6,7 +6,7 @@
 #
 # haha. i'm so funny.
 
-from colorguard import Bits
+from colorguard import PaddedBits, Bits
 
 
 # noinspection PyInitNewSignature
@@ -56,7 +56,7 @@ class BitFlag(object, metaclass=BitFlagMeta):
     def __new__(cls, **kwargs):
         use_flags = {}
 
-        bits = Bits(2 ** cls.__bit_length__ - 1)
+        bits = PaddedBits(0, cls.__bit_length__)
 
         for ident, value in kwargs.items():
             if ident not in cls.__flags__:
@@ -69,7 +69,7 @@ class BitFlag(object, metaclass=BitFlagMeta):
             use_flags[ident] = value
 
         if len(use_flags) != len(cls.__flags__):
-            raise KeyError("Missing fields in {}".format(cls.__name__))
+            raise KeyError("All fields required for {!r}: {!r}".format(cls.__name__, list(cls.__flags__.keys())))
 
         for flag, val in use_flags.items():
             start = cls.__flags__[flag][0]
@@ -81,8 +81,8 @@ class BitFlag(object, metaclass=BitFlagMeta):
 
     @classmethod
     def from_bits(cls, bits):
-        if not isinstance(bits, Bits):
-            bits = Bits(bits)
+        if not isinstance(bits, PaddedBits):
+            bits = PaddedBits(int(bits), cls.__bit_length__)
 
         fields = {}
         for flag, span in cls.__flags__.items():
@@ -95,6 +95,6 @@ class BitFlag(object, metaclass=BitFlagMeta):
 
     @classmethod
     def from_bytes(cls, b, byteorder="big"):
-        bits = Bits.from_bytes(b, byteorder=byteorder)
+        bits = PaddedBits.from_bytes(b, byteorder=byteorder)
 
         return cls.from_bits(bits)

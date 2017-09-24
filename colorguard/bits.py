@@ -215,7 +215,7 @@ class PaddedBits(Bits):
         super().__init__(value=value)
 
         self._value = value
-        self.bits = bits
+        self._bits = bits
 
     @property
     def value(self):
@@ -228,11 +228,24 @@ class PaddedBits(Bits):
 
         self._value = value
 
+    @property
+    def bits(self):
+        return self._bits
+
+    @bits.setter
+    def bits(self, value):
+        if self.value.bit_length() > value:
+            raise ValueError("current value {} doesn't fit in {} bits".format(self.value, value))
+
+        self._bits = value
+
     @classmethod
-    def from_bytes(cls, b, byteorder="big"):
+    def from_bytes(cls, b, byteorder="big", bit_length=None):
         value = int.from_bytes(b, byteorder=byteorder)
 
-        return PaddedBits(value, value.bit_length())
+        bit_length = bit_length or ((value.bit_length()+7)//8)*8
+
+        return PaddedBits(value, bit_length)
 
     def to_bytes(self, byteorder="big"):
         bl = (self.bits + 7) // 8
