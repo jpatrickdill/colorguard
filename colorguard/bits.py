@@ -60,15 +60,23 @@ class Bits(object):
     def __len__(self):
         return self.value.bit_length()
 
+    def bit_length(self):
+        return self.value.bit_length()
+
     def __getitem__(self, item):
         if isinstance(item, slice):
-            start = item.start or 0
-            stop = item.stop or self.value.bit_length()
+            start = 0 if item.start is None else item.start
+            stop = self.value.bit_length() if item.stop is None else item.stop
 
             if stop < 0:
                 stop = self.value.bit_length() + stop
+            if start < 0:
+                start = self.value.bit_length() + start
 
             span = stop - start
+            if span <= 0:
+                return Bits(0)
+
             mask = 2 ** span - 1
 
             offset = self.value.bit_length() - stop
@@ -89,32 +97,37 @@ class Bits(object):
 
     def __setitem__(self, item, value):
         if isinstance(item, slice):
-            start = item.start or 0
-            stop = item.stop or self.value.bit_length()
+            start = 0 if item.start is None else item.start
+            stop = self.value.bit_length() if item.stop is None else item.stop
 
             if stop < 0:
                 stop = self.value.bit_length() + stop
+            if start < 0:
+                start = self.value.bit_length() + start
 
-            span = stop - start
-            mask = 2 ** span - 1
+            span = stop-start
+            if value.bit_length() > span:
+                raise ValueError("{!r} doesn't fit in {} bit(s)".format(value, span))
 
-            offset = self.value.bit_length() - stop
+            nv = self[:start] << span
+            nv |= value
 
-            if offset < 0:
-                raise ValueError("Bit range {}:{} to large for {!r}".format(start, stop, self))
+            nv <<= self.bit_length() - stop
+            nv |= (self[stop+1:]).value
 
-            return Bits((self.value & (mask << offset)) >> offset)
+            self.value = nv.value
 
         elif isinstance(item, int):
-            nv = 2**item-1
-            nv <<= 1
+            if item >= self.bit_length():
+                raise KeyError("{!r} not in bit range for {}".format(item, self.value))
+
+            nv = self[:item] << 1
             nv |= (1 if value > 0 else 0)
 
-            _s = self.value.bit_length()-item-1
-            nv <<= _s
-            nv |= 2**(_s)-1
+            nv <<= self.bit_length() - item-1
+            nv |= (self[item+1:]).value
 
-            return Bits(nv)
+            self.value = nv.value
 
     def __eq__(self, other):
         return self.value == float(other)
