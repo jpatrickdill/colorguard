@@ -200,3 +200,120 @@ class Bits(object):
         shifted = self.value << other.bit_length()
 
         return Bits(shifted+other)
+
+
+class PaddedBits(Bits):
+    def __init__(self, value, bits):
+        super().__init__(value=value)
+        self.bits = bits
+
+    @classmethod
+    def from_bytes(cls, b, byteorder="big"):
+        value = int.from_bytes(b, byteorder=byteorder)
+
+        return PaddedBits(value, value.bit_length())
+
+    def to_bytes(self, byteorder="big"):
+        bl = (self.bits+7) // 8
+
+        return self.value.to_bytes(bl, byteorder)
+
+    def __repr__(self):
+        return "PaddedBits({})".format("".join(iter(self)))
+
+    def __iter__(self):
+        return [0]*(self.bits-self.value.bit_length()) + list(bin(self.value))[2:]
+
+    def __add__(self, other):
+        nv = self.value + int(other)
+        if nv.bit_length > self.bits:
+            raise ValueError("{} is more than {} bits".format(nv, self.bits))
+
+        return PaddedBits(nv, self.bits)
+
+    def __sub__(self, other):
+        nv = self.value - int(other)
+        if nv.bit_length > self.bits:
+            raise ValueError("{} is more than {} bits".format(nv, self.bits))
+
+        return PaddedBits(nv, self.bits)
+
+    def __mul__(self, other):
+        nv = self.value * int(other)
+        if nv.bit_length > self.bits:
+            raise ValueError("{} is more than {} bits".format(nv, self.bits))
+
+        return PaddedBits(nv, self.bits)
+
+    def __truediv__(self, other):
+        nv = self.value // int(other)
+        if nv.bit_length > self.bits:
+            raise ValueError("{} is more than {} bits".format(nv, self.bits))
+
+        return PaddedBits(nv, self.bits)
+
+    def __floordiv__(self, other):
+        nv = self.value // int(other)
+        if nv.bit_length > self.bits:
+            raise ValueError("{} is more than {} bits".format(nv, self.bits))
+
+        return PaddedBits(nv, self.bits)
+
+    def __mod__(self, other):
+        nv = self.value % int(other)
+        if nv.bit_length > self.bits:
+            raise ValueError("{} is more than {} bits".format(nv, self.bits))
+
+        return PaddedBits(nv, self.bits)
+
+    def __pow__(self, power, modulo=None):
+        nv = pow(self.value, int(power), int(modulo))
+        if nv.bit_length > self.bits:
+            raise ValueError("{} is more than {} bits".format(nv, self.bits))
+
+        return PaddedBits(nv, self.bits)
+
+    def __lshift__(self, other):
+        nv = self.value << int(other)
+
+        return PaddedBits(nv, self.bits+int(other))
+
+    def __rshift__(self, other):
+        nv = self.value >> int(other)
+
+        return PaddedBits(nv, self.bits - int(other))
+
+    def __and__(self, other):
+        nv = self.value & int(other)
+        if nv.bit_length > self.bits:
+            raise ValueError("{} is more than {} bits".format(nv, self.bits))
+
+        return PaddedBits(nv, self.bits)
+
+    def __xor__(self, other):
+        nv = self.value ^ int(other)
+        if nv.bit_length > self.bits:
+            raise ValueError("{} is more than {} bits".format(nv, self.bits))
+
+        return PaddedBits(nv, self.bits)
+
+    def __or__(self, other):
+        nv = self.value | int(other)
+        if nv.bit_length > self.bits:
+            raise ValueError("{} is more than {} bits".format(nv, self.bits))
+
+        return PaddedBits(nv, self.bits)
+
+    def join(self, other):
+        other = int(other)
+
+        shifted = self.value << other.bit_length()
+
+        return PaddedBits(shifted | other, self.bits+other.bit_length())
+
+    def __getitem__(self, item):
+        if isinstance(item, slice):
+            pass
+        elif isinstance(item, int):
+            if not (0 <= item < self.bits):
+                raise KeyError("bit {} not in range for {!r}".format(item, self))
