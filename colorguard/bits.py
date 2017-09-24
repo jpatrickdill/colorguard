@@ -140,4 +140,3 @@ class Bits(object):
 
     def __or__(self, other):
         return Bits(self.value | other)
-
