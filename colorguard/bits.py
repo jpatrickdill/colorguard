@@ -212,11 +212,11 @@ class Bits(object):
 
 
 class PaddedBits(Bits):
-    def __init__(self, value, bits):
+    def __init__(self, value, bit_length):
         super().__init__(value=value)
 
         self._value = value
-        self._bits = bits
+        self._bits = bit_length
 
     @property
     def value(self):

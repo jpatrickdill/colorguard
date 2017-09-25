@@ -6,12 +6,12 @@
 #
 # haha. i'm so funny.
 
-from colorguard import PaddedBits, Bits
+from colorguard import PaddedBits
 
 
 # noinspection PyInitNewSignature
 class BitFlagMeta(type):
-    __flags__ = {}
+    __fields__ = {}
     __bit_length__ = 0
 
     def __init__(cls, name, bases, atts):
@@ -27,74 +27,46 @@ class BitFlagMeta(type):
             if flag.startswith("__") or flag in IGNORED:
                 continue
 
-            cls.__flags__[flag] = (bit_pos, bit_length)
+            cls.__fields__[flag] = (bit_pos, bit_length)
             cls.__bit_length__ += bit_length
             bit_pos += bit_length
 
 
-class Flags(object):
-    def __init__(self, name, attrs):
+class _LoadedBitFlag(object):
+    def __init__(self, name, fields, bit_length, attrs_given=None):
+        self._bits = PaddedBits(0, bit_length)
         self._name = name
-        self._attrs = attrs.keys()
-        for name, value in attrs.items():
-            setattr(self, name, value)
+        self._fields = fields
+        self._bit_length = bit_length
 
-    def __repr__(self):
-        ret = self._name + "("
+        self._attrs = {}
+        for field in self._fields:
+            self._attrs[field] = attrs_given.get(field, 0)
 
-        fields = []
-        for attr in self._attrs:
-            fields.append("{}={}".format(attr, getattr(self, attr)))
+        self._remake_bits()
 
-        return ret + ", ".join(fields) + ")"
+    def __getitem__(self, item):
+        if item not in self._fields:
+            raise KeyError("{!r} isn't a field for {!r}".format(item, self._name))
 
+        return self._attrs[item]
 
-class BitFlag(object, metaclass=BitFlagMeta):
-    __flags__ = {}
-    __bit_length__ = 0
+    def __setitem__(self, item, value):
+        if item not in self._fields:
+            raise KeyError("{!r} isn't a field for {!r}".format(item, self._name))
 
-    def __new__(cls, **kwargs):
-        use_flags = {}
+        field_bit_length = self._fields[item][1]
+        if value.bit_length() > field_bit_length:
+            raise ValueError("{!r} doesn't fit in {} bits".format(value, field_bit_length))
 
-        bits = PaddedBits(0, cls.__bit_length__)
+        self._attrs[item] = value
 
-        for ident, value in kwargs.items():
-            if ident not in cls.__flags__:
-                raise KeyError("Invalid flag {!r} given".format(ident))
+        self._remake_bits()
 
-            # make sure valye fits
-            if value.bit_length() > cls.__flags__[ident][1]:
-                raise ValueError("{!r} to big for {!r} field".format(value, ident))
+    def _remake_bits(self):
+        for field, properties in self._fields.items():
+            self._bits[properties[0]: properties[0] + properties[1]] = self._attrs[field]
 
-            use_flags[ident] = value
-
-        if len(use_flags) != len(cls.__flags__):
-            raise KeyError("All fields required for {!r}: {!r}".format(cls.__name__, list(cls.__flags__.keys())))
-
-        for flag, val in use_flags.items():
-            start = cls.__flags__[flag][0]
-            stop = cls.__flags__[flag][0] + cls.__flags__[flag][1]
-
-            bits[start:stop] = val
-
-        return bits
-
-    @classmethod
-    def from_bits(cls, bits):
-        if not isinstance(bits, PaddedBits):
-            bits = PaddedBits(int(bits), cls.__bit_length__)
-
-        fields = {}
-        for flag, span in cls.__flags__.items():
-            start = cls.__flags__[flag][0]
-            stop = cls.__flags__[flag][0] + cls.__flags__[flag][1]
-
-            fields[flag] = int(bits[start:stop])
-
-        return Flags(cls.__name__, fields)
-
-    @classmethod
-    def from_bytes(cls, b, byteorder="big"):
-        bits = PaddedBits.from_bytes(b, byteorder=byteorder)
-
-        return cls.from_bits(bits)
+    @property
+    def bits(self):
+        return self._bits
