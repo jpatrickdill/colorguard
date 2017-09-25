@@ -32,6 +32,40 @@ class BitFlagMeta(type):
             bit_pos += bit_length
 
 
+class BitFlag(object, metaclass=BitFlagMeta):  # todo: better name for BitFlag
+    __fields__ = {}
+    __bit_length__ = 0
+
+    def __new__(cls, **kwargs):
+        for key in kwargs:
+            if key not in cls.__fields__:
+                raise KeyError("{!r} isn't a field for {!r}".format(key, cls.__name__))
+
+        for key in cls.__fields__:
+            if key not in kwargs:
+                raise KeyError("Missing field {!r}".format(key))
+
+        return _LoadedBitFlag(cls.__name__, cls.__fields__, cls.__bit_length__, attrs_given=kwargs)
+
+    @classmethod
+    def from_bits(cls, bits):
+        if not isinstance(bits, PaddedBits):
+            bits = PaddedBits(int(bits), cls.__bit_length__)
+
+        fields_given = {}
+
+        for field, props in cls.__fields__.items():
+            fields_given[field] = int(bits[props[0]: props[0] + props[1]])
+
+        return _LoadedBitFlag(cls.__name__, cls.__fields__, cls.__bit_length__, attrs_given=fields_given)
+
+    @classmethod
+    def from_bytes(cls, b, byteorder="big"):
+        bits = PaddedBits.from_bytes(b, byteorder=byteorder)
+
+        return cls.from_bits(bits)
+
+
 class _LoadedBitFlag(object):
     def __init__(self, name, fields, bit_length, attrs_given=None):
         self._bits = PaddedBits(0, bit_length)
