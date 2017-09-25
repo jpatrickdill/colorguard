@@ -79,6 +79,11 @@ class _LoadedBitFlag(object):
 
         self._remake_bits()
 
+    def __repr__(self):
+        l = ["{}={}".format(key, self._attrs[key]) for key in self._fields]
+
+        return self._name + "(" + ", ".join(l) + ")"
+
     def __getitem__(self, item):
         if item not in self._fields:
             raise KeyError("{!r} isn't a field for {!r}".format(item, self._name))
