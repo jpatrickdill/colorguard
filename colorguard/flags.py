@@ -19,7 +19,7 @@ class BitFlagMeta(type):
 
         bit_pos = 0
 
-        IGNORED = ["from_bits", "from_bytes"]
+        IGNORED = ("from_bits", "from_bytes")
 
         for flag, bit_length in list(cls.__dict__.items()):
 

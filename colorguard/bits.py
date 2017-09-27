@@ -244,7 +244,7 @@ class PaddedBits(Bits):
     def from_bytes(cls, b, byteorder="big", bit_length=None):
         value = int.from_bytes(b, byteorder=byteorder)
 
-        bit_length = bit_length or ((value.bit_length()+7)//8)*8
+        bit_length = bit_length or ((value.bit_length() + 7) // 8) * 8
 
         return PaddedBits(value, bit_length)
 
@@ -252,6 +252,9 @@ class PaddedBits(Bits):
         bl = (self.bits + 7) // 8
 
         return self.value.to_bytes(bl, byteorder)
+
+    def bit_length(self):
+        return self.bits
 
     def __repr__(self):
         return "PaddedBits({}, bit_length={})".format("".join(map(str, iter(self))), self.bits)
@@ -401,7 +404,7 @@ class PaddedBits(Bits):
             if stop < 0:
                 stop += self.bits
 
-            span = stop-start
+            span = stop - start
 
             if value.bit_length() > span:
                 raise ValueError("{!r} doesn't fit in {} bits".format(value, span))
@@ -409,7 +412,7 @@ class PaddedBits(Bits):
             nv = self[:start]
             nv <<= span
             nv |= value
-            nv <<= self.bits-stop
+            nv <<= self.bits - stop
             nv |= self[stop:]
 
             self.value = nv.value
@@ -423,7 +426,7 @@ class PaddedBits(Bits):
 
             nv = self[:item] << 1
             nv |= value
-            nv <<= self.bits-item-1
-            nv |= self[item+1:]
+            nv <<= self.bits - item - 1
+            nv |= self[item + 1:]
 
             self.value = nv.value
