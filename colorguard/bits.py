@@ -8,6 +8,12 @@ class Bits(object):
 
     @value.setter
     def value(self, value):
+        if value < 0:
+            raise ValueError("value must be >= 0")
+
+        if not isinstance(value, int):
+            raise TypeError("value must be int")
+
         self._value = value
 
     @classmethod
@@ -48,7 +54,7 @@ class Bits(object):
         return self.value
 
     def __repr__(self):
-        return "Bits({})".format(bin(self.value)[2:])
+        return "Bits({})".format(bin(self.value))
 
     def __str__(self):
         return bin(self.value)
@@ -224,8 +230,14 @@ class PaddedBits(Bits):
 
     @value.setter
     def value(self, value):
+        if not isinstance(value, int):
+            raise TypeError("value must be int")
+
         if value.bit_length() > self.bits:
             raise ValueError("{!r} doesn't fit in {} bits".format(value, self.bits))
+
+        if value < 0:
+            raise ValueError("value must be >= 0")
 
         self._value = value
 
@@ -257,7 +269,10 @@ class PaddedBits(Bits):
         return self.bits
 
     def __repr__(self):
-        return "PaddedBits({}, bit_length={})".format("".join(map(str, iter(self))), self.bits)
+        return "PaddedBits({}, bit_length={})".format(str(self), self.bits)
+
+    def __str__(self):
+        return "0b"+"".join(map(str, iter(self)))
 
     def __iter__(self):
         bit_length = self.value.bit_length() if self.value > 0 else 1
