@@ -12,9 +12,11 @@ https://discordapp.com/developers/docs/reference
 """
 
 import sys
+
 sys.path.insert(0, "./../")
 
 from colorguard import BitField
+from datetime import datetime
 
 
 # ObjectID class gets processed at runtime
@@ -30,4 +32,34 @@ class ObjectID(BitField):
 
     increment = 12  # 12 bit incrementing number
 
+    @property
+    def created_at(self):
+        # custom property to convert timestamp to datetime
 
+        # attributes are accessed through indexing
+        epoch = self["timestamp"] + 1420070400000  # discord epoch
+
+        return datetime.utcfromtimestamp(epoch / 1000)
+
+    @created_at.setter
+    def created_at(self, value):
+        # change timestamp by converting back to discord epoch
+
+        self["timestamp"] = int(value.timestamp() * 1000 - 1420070400000)  # MUST be converted to int!
+
+
+# example ID from 2016/4/30
+obj = ObjectID.from_bits(175928847299117063)
+
+print(obj)
+# > ObjectID(timestamp=41944705796, worker_id=1, process_id=0, increment=7)
+
+
+# Use property we defined to get datetime
+print(obj.created_at)
+# > datetime.datetime(2016, 4, 30, 11, 18, 25, 796000)
+
+# Awesome! Now let's try changing it with the setter
+obj.created_at = datetime(2092, 3, 28)
+print(obj)
+# > ObjectID(timestamp=2437444800000, worker_id=1, process_id=0, increment=7)
