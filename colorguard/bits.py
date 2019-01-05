@@ -74,6 +74,7 @@ class Bits(object):
     def __len__(self):
         return self.value.bit_length()
 
+    @property
     def bit_length(self):
         return self.value.bit_length()
 

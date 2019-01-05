@@ -6,3 +6,6 @@ tests.py
 /dist/
 venv/
 *.pyc
+
+make.bat
+Makefile
