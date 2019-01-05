@@ -9,3 +9,5 @@ venv/
 
 make.bat
 Makefile
+
+docs/build/
