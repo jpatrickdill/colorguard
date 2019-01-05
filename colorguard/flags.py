@@ -16,7 +16,7 @@ class BitFieldMeta(type):
         for flag, bit_length in list(cls.__dict__.items()):
 
             # ignore builtin attributes
-            if flag.startswith("__") or flag in IGNORED:
+            if flag.startswith("__") or flag in IGNORED or not isinstance(bit_length, int):
                 continue
 
             cls.__fields__[flag] = (bit_pos, bit_length)
