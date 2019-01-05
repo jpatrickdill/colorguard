@@ -1,6 +1,9 @@
 Color Guard
 ===========
 
+.. image:: https://img.shields.io/pypi/v/colorguard.svg
+    :target: https://pypi.org/project/colorguard/
+
 **Color Guard** provides simple bit manipulation and bit flags in Python. Everything is built on
 the ``int`` type so no number functionality is lost, while making it possible to index and slice binary numbers
 like strings.
