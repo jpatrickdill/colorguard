@@ -177,4 +177,98 @@ bit length, an error will be raised.
         raise ValueError("current value {} doesn't fit in {} bits".format(self.value, value))
     ValueError: current value 5 doesn't fit in 2 bits
 
+BitFlags
+--------
+
+Bit flags allow you to squeeze multiple fields into one, longer number. The fields don't even
+have to be numbers, they also represent booleans or enums.
+
+Bit flags are created in colorguard by inheriting from the :class:`BitFlag` class.
+
+.. code-block:: python
+
+    class Pizza(BitFlag):
+        size = 3  # "size" is a 3 bit field
+
+        pepperoni = 1  # 1 bit boolean
+        meat = 1  # 1 bit boolean
+        mushrooms = 1  # 1 bit boolean
+
+        crust = 2  # 2 bit field
+
+This bit flag could be used to describe a pizza. When using the bit flag directly, you just
+pass some values.
+
+.. code-block:: pycon
+
+    >>> pizza = Pizza(size=4, pepperoni=1, meat=1, mushrooms=0, crust=0)
+
+Accessing and changing fields is simple. Just index the bit flag like a dictionary:
+
+.. code-block:: pycon
+
+    >>> pizza["size"] = 3
+    >>> pizza["crust"] = 1
+    >>> pizza
+    Pizza(size=3, pepperoni=1, meat=1, mushrooms=0, crust=1)
+
+From there, we can convert our pizza to a single 8-bit value. :attr:`BitFlag.bits` will return
+a :class:`PaddedBits` object with our fields packed in.
+
+.. code-block:: pycon
+
+    >>> pizza.bits
+    PaddedBits(0b01111001, bit_length=8)
+
+You can also populate a bit flag with a bits object like this one. In fact, we should see the same
+fields if we use this value.
+
+.. code-block:: pycon
+
+    >>> pizza = Pizza.from_bits(0b01111001)
+    >>> pizza
+    Pizza(size=3, pepperoni=1, meat=1, mushrooms=0, crust=1)
+
+If we want to make further use of bit flags, we can add custom ``@property`` functions to describe
+properties.
+
+.. code-block:: python
+
+    class Pizza(BitFlag):
+        _size = 3  # "size" is a 3 bit field
+
+        pepperoni = 1  # 1 bit boolean
+        meat = 1  # 1 bit boolean
+        mushrooms = 1  # 1 bit boolean
+
+        _crust = 2  # 2 bit field
+
+        @property
+        def size():
+            return (
+                "Small",
+                "Medium",
+                "Large",
+                "X-Large",
+                "Jumbo",
+                "Colossal"
+            )[self["_size"]]
+
+        @property
+        def crust():
+            return (
+                "Thin",
+                "Stuffed",
+                "Cheesy"
+            )[self["_crust"]]
+
+Now, the size and crust are treated like Enum values.
+
+.. code-block:: pycon
+
+    >>> pizza = Pizza(size=4, pepperoni=1, meat=1, mushrooms=0, crust=0)
+    >>> pizza.size
+    Jumbo
+    >>> pizza.crust
+    Thin
 
