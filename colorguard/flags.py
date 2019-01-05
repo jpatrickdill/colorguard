@@ -63,7 +63,7 @@ class _LoadedBitField(object):
         self._bits = PaddedBits(0, bit_length)
         self._name = name
         self._fields = fields
-        self.bit_length = bit_length
+        self._bit_length = bit_length
 
         self._attrs = {}
         for field in self._fields:
@@ -97,6 +97,10 @@ class _LoadedBitField(object):
     def _remake_bits(self):
         for field, properties in self._fields.items():
             self._bits[properties[0]: properties[0] + properties[1]] = self._attrs[field]
+
+    @property
+    def bit_length(self):
+        return self._bit_length
 
     @property
     def bits(self):
