@@ -118,9 +118,9 @@ class _LoadedBitFlag(object):
         for field in self._fields:
             value = attrs_given.get(field, 0)
 
-            if value is True:
+            if value == True:
                 value = 1
-            if value is False:
+            if value == False:
                 value = 0
 
             self._attrs[field] = value
