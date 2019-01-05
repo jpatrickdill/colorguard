@@ -325,49 +325,49 @@ class PaddedBits(Bits):
     def __add__(self, other):
         nv = self.value + int(other)
         if nv.bit_length() > self.bits:
-            raise ValueError("{} is more than {} bits".format(nv, self.bits))
+            raise ValueError("{} is longer than {} bits".format(nv, self.bits))
 
         return PaddedBits(nv, self.bits)
 
     def __sub__(self, other):
         nv = self.value - int(other)
         if nv.bit_length() > self.bits:
-            raise ValueError("{} is more than {} bits".format(nv, self.bits))
+            raise ValueError("{} is longer than {} bits".format(nv, self.bits))
 
         return PaddedBits(nv, self.bits)
 
     def __mul__(self, other):
         nv = self.value * int(other)
         if nv.bit_length() > self.bits:
-            raise ValueError("{} is more than {} bits".format(nv, self.bits))
+            raise ValueError("{} is longer than {} bits".format(nv, self.bits))
 
         return PaddedBits(nv, self.bits)
 
     def __truediv__(self, other):
         nv = self.value // int(other)
         if nv.bit_length() > self.bits:
-            raise ValueError("{} is more than {} bits".format(nv, self.bits))
+            raise ValueError("{} is longer than {} bits".format(nv, self.bits))
 
         return PaddedBits(nv, self.bits)
 
     def __floordiv__(self, other):
         nv = self.value // int(other)
         if nv.bit_length() > self.bits:
-            raise ValueError("{} is more than {} bits".format(nv, self.bits))
+            raise ValueError("{} is longer than {} bits".format(nv, self.bits))
 
         return PaddedBits(nv, self.bits)
 
     def __mod__(self, other):
         nv = self.value % int(other)
         if nv.bit_length() > self.bits:
-            raise ValueError("{} is more than {} bits".format(nv, self.bits))
+            raise ValueError("{} is longer than {} bits".format(nv, self.bits))
 
         return PaddedBits(nv, self.bits)
 
     def __pow__(self, power, modulo=None):
         nv = pow(self.value, int(power), int(modulo))
         if nv.bit_length() > self.bits:
-            raise ValueError("{} is more than {} bits".format(nv, self.bits))
+            raise ValueError("{} is longer than {} bits".format(nv, self.bits))
 
         return PaddedBits(nv, self.bits)
 
@@ -387,21 +387,21 @@ class PaddedBits(Bits):
     def __and__(self, other):
         nv = self.value & int(other)
         if nv.bit_length() > self.bits:
-            raise ValueError("{} is more than {} bits".format(nv, self.bits))
+            raise ValueError("{} is longer than {} bits".format(nv, self.bits))
 
         return PaddedBits(nv, self.bits)
 
     def __xor__(self, other):
         nv = self.value ^ int(other)
         if nv.bit_length() > self.bits:
-            raise ValueError("{} is more than {} bits".format(nv, self.bits))
+            raise ValueError("{} is longer than {} bits".format(nv, self.bits))
 
         return PaddedBits(nv, self.bits)
 
     def __or__(self, other):
         nv = self.value | int(other)
         if nv.bit_length() > self.bits:
-            raise ValueError("{} is more than {} bits".format(nv, self.bits))
+            raise ValueError("{} is longer than {} bits".format(nv, self.bits))
 
         return PaddedBits(nv, self.bits)
 
