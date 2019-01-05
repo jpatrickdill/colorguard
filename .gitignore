@@ -4,3 +4,5 @@ tests.py
 /__pycache__/
 /colorguard.egg-info/
 /dist/
+venv/
+*.pyc
