@@ -72,9 +72,9 @@ class _LoadedBitField(object):
         self._remake_bits()
 
     def __repr__(self):
-        l = ["{}={}".format(key, self._attrs[key]) for key in self._fields]
+        values = ["{}={}".format(key, self._attrs[key]) for key in self._fields]
 
-        return self._name + "(" + ", ".join(l) + ")"
+        return self._name + "(" + ", ".join(values) + ")"
 
     def __getitem__(self, item):
         if item not in self._fields:
