@@ -125,11 +125,12 @@ class _LoadedBitFlag(object):
 
             self._attrs[field] = value
 
-        for k, v in funcs:
-            setattr(self, k, v)
+        if funcs:
+            for k, v in funcs:
+                setattr(self, k, v)
 
-            # ensure that data descriptors get called
-            setattr(self.__class__, k, v)
+                # ensure that data descriptors get called
+                setattr(self.__class__, k, v)
 
         self._remake_bits()
 

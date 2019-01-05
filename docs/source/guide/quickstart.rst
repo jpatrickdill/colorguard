@@ -177,3 +177,4 @@ bit length, an error will be raised.
         raise ValueError("current value {} doesn't fit in {} bits".format(self.value, value))
     ValueError: current value 5 doesn't fit in 2 bits
 
+
