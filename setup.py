@@ -22,6 +22,9 @@ SOFTWARE.
 
 from setuptools import setup
 
+with open("readme.rst") as file:
+    long_desc = file.read()
+
 setup(
     name="colorguard",
     version="0.3",
@@ -31,5 +34,6 @@ setup(
     author="Patrick Dill",
     author_email="jamespatrickdill@gmail.com",
     description="Better bit manipulation that allows indexing, and automatic bit flags.",
+    long_description=long_desc,
     requires=[],
 )
