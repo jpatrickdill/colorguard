@@ -1,9 +1,11 @@
 from colorguard import PaddedBits
+import inspect
 
 
 # noinspection PyInitNewSignature
 class BitFieldMeta(type):
     __fields__ = {}
+    __funcs__ = []
     __bit_length__ = 0
 
     def __init__(cls, name, bases, attrs):
@@ -13,19 +15,31 @@ class BitFieldMeta(type):
 
         IGNORED = ("from_bits", "from_bytes")
 
-        for flag, bit_length in list(cls.__dict__.items()):
+        for key, val in list(cls.__dict__.items()):
+            private = False
 
             # ignore builtin attributes
-            if flag.startswith("__") or flag in IGNORED or not isinstance(bit_length, int):
+            if key.startswith("__") or key in IGNORED or not isinstance(val, int):
+                private = True
+
+            # retain custom functions or properties
+            if inspect.isfunction(val) or inspect.ismethod(val) or inspect.isdatadescriptor(val):
+                if key[0] == "_":
+                    private = True
+                else:
+                    cls.__funcs__.append((key, val))
+
+            if private:
                 continue
 
-            cls.__fields__[flag] = (bit_pos, bit_length)
-            cls.__bit_length__ += bit_length
-            bit_pos += bit_length
+            cls.__fields__[key] = (bit_pos, val)
+            cls.__bit_length__ += val
+            bit_pos += val
 
 
 class BitField(object, metaclass=BitFieldMeta):
     __fields__ = {}
+    __funcs__ = []
     __bit_length__ = 0
 
     def __new__(cls, **kwargs):
@@ -49,7 +63,8 @@ class BitField(object, metaclass=BitFieldMeta):
         for field, props in cls.__fields__.items():
             fields_given[field] = int(bits[props[0]: props[0] + props[1]])
 
-        return _LoadedBitField(cls.__name__, cls.__fields__, cls.__bit_length__, attrs_given=fields_given)
+        return _LoadedBitField(cls.__name__, cls.__fields__, cls.__bit_length__, funcs=cls.__funcs__,
+                               attrs_given=fields_given)
 
     @classmethod
     def from_bytes(cls, b, byteorder="big"):
@@ -59,7 +74,7 @@ class BitField(object, metaclass=BitFieldMeta):
 
 
 class _LoadedBitField(object):
-    def __init__(self, name, fields, bit_length, attrs_given=None):
+    def __init__(self, name, fields, bit_length, funcs=None, attrs_given=None):
         self._bits = PaddedBits(0, bit_length)
         self._name = name
         self._fields = fields
@@ -68,6 +83,12 @@ class _LoadedBitField(object):
         self._attrs = {}
         for field in self._fields:
             self._attrs[field] = attrs_given.get(field, 0)
+
+        for k, v in funcs:
+            setattr(self, k, v)
+
+            # ensure that data descriptors get called
+            setattr(self.__class__, k, v)
 
         self._remake_bits()
 
@@ -93,6 +114,9 @@ class _LoadedBitField(object):
         self._attrs[item] = value
 
         self._remake_bits()
+
+    def __int__(self):
+        return int(self.bits)
 
     def _remake_bits(self):
         for field, properties in self._fields.items():
