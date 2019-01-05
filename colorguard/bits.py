@@ -20,12 +20,19 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
+
 class Bits(object):
+    """
+    Contains an integer value and provides methods for easy bit manipulation.
+
+    :param int value: Value to initialize the object with
+    """
     def __init__(self, value=0):
         self._value = int(value)
 
     @property
     def value(self):
+        """Integer value"""
         return self._value
 
     @value.setter
@@ -40,6 +47,12 @@ class Bits(object):
 
     @classmethod
     def from_binary(cls, binary):
+        """
+        Creates Bits object from binary string.
+
+        :param str binary: Binary value
+        :returns: :class:`Bits`
+        """
         if isinstance(binary, int):
             return Bits(binary)
 
@@ -50,6 +63,12 @@ class Bits(object):
 
     @classmethod
     def from_hex(cls, hex_):
+        """
+        Creates Bits object from hexadecimal string.
+
+        :param str hex_: Hexadecimal value
+        :returns: :class:`Bits`
+        """
         if isinstance(hex_, int):
             return Bits(hex_)
 
@@ -60,11 +79,29 @@ class Bits(object):
 
     @classmethod
     def from_bytes(cls, b, byteorder="big"):
+        """
+        Creates Bits object from bytes object.
+
+        :param bytes b: Bytes object
+        :param string byteorder: (Optional) Byte order. Must equal "big" or "small". Defaults to "big"
+
+        :returns: :class:`Bits`
+        """
+
         value = int.from_bytes(b, byteorder=byteorder)
 
         return Bits(value)
 
     def to_bytes(self, byteorder="big"):
+        """
+        Converts Bits object to bytes.
+
+        You can also use bytes(bits) if you aren't specifying the byte order.
+
+        :param byteorder: (Optional) Byte order. Must equal "big" or "small". Defaults to "big"
+        :returns: bytes
+        """
+
         bl = (self.value.bit_length() + 7) // 8  # pad bytes
 
         return self.value.to_bytes(bl, byteorder)
@@ -97,6 +134,12 @@ class Bits(object):
         return self.value.bit_length()
 
     def bit_length(self):
+        """
+        Returns the length of the value in bits.
+
+        :returns: int
+        """
+
         return self.value.bit_length()
 
     def __getitem__(self, item):
@@ -250,6 +293,15 @@ class Bits(object):
         return Bits(self.value | int(other))
 
     def join(self, other):
+        """
+        Concatenates two Bits objects.
+
+        :param other: Bits object to join to
+        :type other: :class:`Bits`
+
+        :returns: :class:`Bits`
+        """
+
         other = int(other)
 
         shifted = self.value << other.bit_length()
@@ -258,14 +310,25 @@ class Bits(object):
 
 
 class PaddedBits(Bits):
-    def __init__(self, value, bit_length):
+    """
+    Inherits :class:`Bits`
+
+    Prevents value from exceeding max bit length and pads with zeros when converting to other types.
+
+    :param int value: Value to initialize the object with
+    :param int bit_length: (Optional) Max bit length. If unspecified, will be chosen automatically
+    """
+
+    def __init__(self, value, bit_length=None):
         super().__init__(value=value)
 
         self._value = value
-        self._bits = bit_length
+        self._bits = bit_length or value.bit_length()
 
     @property
     def value(self):
+        """Integer value"""
+
         return self._value
 
     @value.setter
@@ -283,6 +346,10 @@ class PaddedBits(Bits):
 
     @property
     def bits(self):
+        """
+        Maximum number of bits in the value.
+        """
+
         return self._bits
 
     @bits.setter
@@ -294,6 +361,16 @@ class PaddedBits(Bits):
 
     @classmethod
     def from_bytes(cls, b, byteorder="big", bit_length=None):
+        """
+        Creates PaddedBits object from bytes object.
+
+        :param bytes b: Bytes object
+        :param string byteorder: (Optional) Byte order. Must equal "big" or "small". Defaults to "big"
+        :param int bit_length: (Optional) Max bit length. If unspecified, will be chosen automatically
+
+        :returns: :class:`PaddedBits`
+        """
+
         value = int.from_bytes(b, byteorder=byteorder)
 
         bit_length = bit_length or ((value.bit_length() + 7) // 8) * 8
@@ -301,18 +378,32 @@ class PaddedBits(Bits):
         return PaddedBits(value, bit_length)
 
     def to_bytes(self, byteorder="big"):
+        """
+        Converts object to bytes with padding.
+
+        :param str byteorder: (Optional) Byte order. Must equal "big" or "small". Defaults to "big"
+
+        :returns: bytes
+        """
+
         bl = (self.bits + 7) // 8
 
         return self.value.to_bytes(bl, byteorder)
 
     def bit_length(self):
+        """
+        Returns maximum number of bits in the value
+
+        :returns: int
+        """
+
         return self.bits
 
     def __repr__(self):
         return "PaddedBits({}, bit_length={})".format(str(self), self.bits)
 
     def __str__(self):
-        return "0b"+"".join(map(str, iter(self)))
+        return "0b" + "".join(map(str, iter(self)))
 
     def __bytes__(self):
         return self.to_bytes()
@@ -406,6 +497,15 @@ class PaddedBits(Bits):
         return PaddedBits(nv, self.bits)
 
     def join(self, other):
+        """
+        Concatenates two PaddedBits objects. The new bit length will be the total of the two PaddedBits objects.
+
+        :param other: PaddedBits object to join to
+        :type other: :class:`PaddedBits`
+
+        :returns: :class:`PaddedBits`
+        """
+
         other = int(other)
 
         shifted = self.value << other.bit_length()
