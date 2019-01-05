@@ -116,7 +116,14 @@ class _LoadedBitFlag(object):
 
         self._attrs = {}
         for field in self._fields:
-            self._attrs[field] = attrs_given.get(field, 0)
+            value = attrs_given.get(field, 0)
+
+            if value is True:
+                value = 1
+            if value is False:
+                value = 0
+
+            self._attrs[field] = value
 
         for k, v in funcs:
             setattr(self, k, v)
