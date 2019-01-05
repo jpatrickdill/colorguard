@@ -196,40 +196,40 @@ class Bits(object):
         return float(other) == self.value
 
     def __add__(self, other):
-        return Bits(self.value + other)
+        return Bits(self.value + int(other))
 
     def __sub__(self, other):
-        return Bits(self.value - other)
+        return Bits(self.value - int(other))
 
     def __mul__(self, other):
-        return Bits(self.value * other)
+        return Bits(self.value * int(other))
 
     def __truediv__(self, other):
-        return Bits(self.value // other)
+        return Bits(self.value // int(other))
 
     def __floordiv__(self, other):
-        return Bits(self.value // other)
+        return Bits(self.value // int(other))
 
     def __mod__(self, other):
-        return Bits(self.value % other)
+        return Bits(self.value % int(other))
 
     def __pow__(self, power, modulo=None):
-        return Bits(pow(self.value, power, modulo))
+        return Bits(pow(self.value, int(other), int(other)))
 
     def __lshift__(self, other):
-        return Bits(self.value << other)
+        return Bits(self.value << int(other))
 
     def __rshift__(self, other):
-        return Bits(self.value >> other)
+        return Bits(self.value >> int(other))
 
     def __and__(self, other):
-        return Bits(self.value & other)
+        return Bits(self.value & int(other))
 
     def __xor__(self, other):
-        return Bits(self.value ^ other)
+        return Bits(self.value ^ int(other))
 
     def __or__(self, other):
-        return Bits(self.value | other)
+        return Bits(self.value | int(other))
 
     def join(self, other):
         other = int(other)
