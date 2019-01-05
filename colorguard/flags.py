@@ -72,6 +72,18 @@ class BitField(object, metaclass=BitFieldMeta):
 
         return cls.from_bits(bits)
 
+    @classmethod
+    def from_stream(cls, stream, byteorder="big"):
+        byte_length = (cls.__bit_length__ + 7) // 8
+
+        b = stream.read(byte_length)
+
+        # allow normal streams
+        if not isinstance(b, bytes):
+            b = bytes(b, "utf-8")
+
+        return cls.from_bytes(b)
+
 
 class _LoadedBitField(object):
     def __init__(self, name, fields, bit_length, funcs=None, attrs_given=None):
