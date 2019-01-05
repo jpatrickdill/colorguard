@@ -198,23 +198,41 @@ class Bits(object):
     def __add__(self, other):
         return Bits(self.value + int(other))
 
+    def __radd__(self, other):
+        return Bits(self.value + int(other))
+
     def __sub__(self, other):
         return Bits(self.value - int(other))
 
+    def __rsub__(self, other):
+        return Bits(int(other) - self.value)
+
     def __mul__(self, other):
+        return Bits(self.value * int(other))
+
+    def __rmul__(self, other):
         return Bits(self.value * int(other))
 
     def __truediv__(self, other):
         return Bits(self.value // int(other))
 
-    def __floordiv__(self, other):
-        return Bits(self.value // int(other))
+    def __rtruediv__(self, other):
+        return Bits(int(other) // self.value)
+
+    def __rfloordiv__(self, other):
+        return Bits(int(other) // self.value)
 
     def __mod__(self, other):
         return Bits(self.value % int(other))
 
+    def __rmod__(self, other):
+        return Bits(int(other) % self.value)
+
     def __pow__(self, power, modulo=None):
-        return Bits(pow(self.value, int(other), int(other)))
+        return Bits(pow(self.value, power, modulo))
+
+    def __rpow__(self, other):
+        return Bits(int(other) ** self.value)
 
     def __lshift__(self, other):
         return Bits(self.value << int(other))
