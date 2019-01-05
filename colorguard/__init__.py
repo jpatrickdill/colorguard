@@ -1,2 +1,2 @@
 from colorguard.bits import Bits, PaddedBits
-from colorguard.flags import BitFlag
+from colorguard.flags import BitField
