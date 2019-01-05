@@ -10,9 +10,12 @@ Color Guard
    :maxdepth: 2
    :caption: Contents:
 
-**Color Guard** provides easy bit manipulation and an bit flag reading/writing in Python. Everything is built off of
-the builtin ``int`` type so no math functionality is lost, while making it possible to index and slice binary numbers
+**Color Guard** provides simple bit manipulation and bit flags in Python. Everything is built on
+the ``int`` type so no number functionality is lost, while making it possible to index and slice binary numbers
 like strings.
+
+.. image:: _static/colorguard.jpg
+   :width: 100%
 
 ---------------------
 
@@ -45,7 +48,7 @@ Color Guard also supports conversion to and from other Python data types.
 
    >>> bytes(Bits(367))
    b'\x01o'
-   >>> int(Bits(1011010))
+   >>> int(Bits(0b1011010))
    90
    >>> list(Bits(367))
    [1, 0, 1, 1, 0, 1, 1, 1, 1]
@@ -65,12 +68,13 @@ Features
 Guide
 -----
 
-Example usages of Color Guard with explanations.
+Example applications of Color Guard.
 
 .. toctree::
    :maxdepth: 2
 
-   user/install
+   guide/install
+   guide/quickstart
 
 
 
