@@ -122,7 +122,6 @@ class _LoadedBitField(object):
         for field, properties in self._fields.items():
             self._bits[properties[0]: properties[0] + properties[1]] = self._attrs[field]
 
-    @property
     def bit_length(self):
         return self._bit_length
 
