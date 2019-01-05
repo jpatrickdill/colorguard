@@ -15,12 +15,12 @@ import sys
 
 sys.path.insert(0, "./../")
 
-from colorguard import BitField
+from colorguard import BitFlag
 from datetime import datetime
 
 
 # ObjectID class gets processed at runtime
-class ObjectID(BitField):
+class ObjectID(BitFlag):
     """
     Discord Object ID
     """
