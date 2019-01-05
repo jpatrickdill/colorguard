@@ -75,6 +75,7 @@ Example applications of Color Guard.
 
    guide/install
    guide/quickstart
+   guide/reference
 
 
 
