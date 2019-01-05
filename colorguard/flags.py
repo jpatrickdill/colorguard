@@ -60,6 +60,15 @@ class BitFlagMeta(type):
 
 
 class BitFlag(object, metaclass=BitFlagMeta):
+    """
+    Skeleton class for custom bit flags. When called, a :class:`flags._LoadedBitFlag` is actually returned, as this
+    class is only used to define bit flags.
+
+    :param \*\*kwargs: Fields to populate the bit flag with. Each field MUST be specified.
+
+    :returns: :class:`flags._LoadedBitFlag`
+    """
+
     __fields__ = {}
     __funcs__ = []
     __bit_length__ = 0
@@ -77,6 +86,13 @@ class BitFlag(object, metaclass=BitFlagMeta):
 
     @classmethod
     def from_bits(cls, bits):
+        """
+        Populates a bit flag from bits.
+
+        :param bits: Bits to populate with. May be :class:`Bits`, :class:`PaddedBits`, or ``int``
+        :returns: :class:`flags._LoadedBitFlag`
+        """
+
         if not isinstance(bits, PaddedBits):
             bits = PaddedBits(int(bits), cls.__bit_length__)
 
@@ -90,12 +106,30 @@ class BitFlag(object, metaclass=BitFlagMeta):
 
     @classmethod
     def from_bytes(cls, b, byteorder="big"):
+        """
+        Populates a bit flag from bytes object.
+
+        :param bytes b: Bytes to populate with
+        :param str byteorder: (Optional) Byte order. Must equal "big" or "little". Defaults to "big"
+
+        :returns: :class:`flags._LoadedBitFlag`
+        """
+
         bits = PaddedBits.from_bytes(b, byteorder=byteorder)
 
         return cls.from_bits(bits)
 
     @classmethod
     def from_stream(cls, stream, byteorder="big"):
+        """
+        Populates a bit flag from a readable stream. ``stream.read(bit_length)`` will be called.
+
+        :param stream: Readable stream, e.g., file object
+        :param str byteorder: (Optional) Byte order. Must equal "big" or "little". Defaults to "little"
+
+        :returns: :class:`flags._LoadedBitFlag`
+        """
+
         byte_length = (cls.__bit_length__ + 7) // 8
 
         b = stream.read(byte_length)
@@ -108,6 +142,9 @@ class BitFlag(object, metaclass=BitFlagMeta):
 
 
 class _LoadedBitFlag(object):
+    """
+    Populated bit flag. Can be read or written to like a dictionary.
+    """
     def __init__(self, name, fields, bit_length, funcs=None, attrs_given=None):
         self._bits = PaddedBits(0, bit_length)
         self._name = name
@@ -164,6 +201,11 @@ class _LoadedBitFlag(object):
         return int(self.bits)
 
     def update(self, **kwargs):
+        """
+        Updates bit fields with new values.
+
+        :param \*\*kwargs: Values to update with.
+        """
         for k, v in kwargs.items():
             self[k] = v
 
@@ -172,6 +214,12 @@ class _LoadedBitFlag(object):
             self._bits[properties[0]: properties[0] + properties[1]] = self._attrs[field]
 
     def bit_length(self):
+        """
+        Returns added bit length of the bit flag.
+
+        :returns: int
+        """
+
         return self._bit_length
 
     @property

@@ -25,7 +25,7 @@ class Bits(object):
     """
     Contains an integer value and provides methods for easy bit manipulation.
 
-    :param int value: Value to initialize the object with
+    :param int value: Value to initialize with
     """
     def __init__(self, value=0):
         self._value = int(value)
@@ -347,7 +347,7 @@ class PaddedBits(Bits):
     @property
     def bits(self):
         """
-        Maximum number of bits in the value.
+        Maximum number of bits in the value. Can be changed.
         """
 
         return self._bits
