@@ -163,6 +163,10 @@ class _LoadedBitFlag(object):
     def __int__(self):
         return int(self.bits)
 
+    def update(self, **kwargs):
+        for k, v in kwargs.items():
+            self[k] = v
+
     def _remake_bits(self):
         for field, properties in self._fields.items():
             self._bits[properties[0]: properties[0] + properties[1]] = self._attrs[field]
