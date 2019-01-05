@@ -109,6 +109,9 @@ class _LoadedBitField(object):
 
         return self._name + "(" + ", ".join(values) + ")"
 
+    def __bytes__(self):
+        return bytes(self.bits)
+
     def __getitem__(self, item):
         if item not in self._fields:
             raise KeyError("{!r} isn't a field for {!r}".format(item, self._name))
