@@ -73,7 +73,7 @@ class BitFlag(object, metaclass=BitFlagMeta):
             if key not in kwargs:
                 raise KeyError("Missing field {!r}".format(key))
 
-        return _LoadedBitFlag(cls.__name__, cls.__fields__, cls.__bit_length__, attrs_given=kwargs)
+        return _LoadedBitFlag(cls.__name__, cls.__fields__, cls.__bit_length__, funcs=cls.__funcs__, attrs_given=kwargs)
 
     @classmethod
     def from_bits(cls, bits):
