@@ -20,14 +20,21 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
+import sys
+
 from setuptools import setup
 
-with open("readme.rst") as file:
-    long_desc = file.read()
+long_desc = ""
+
+if sys.argv[1] == "sdist":
+    print("sdist")
+
+    with open("readme.rst") as file:
+        long_desc = file.read()
 
 setup(
     name="colorguard",
-    version="0.3",
+    version="0.3.1",
     packages=["colorguard"],
     url="http://github.com/reshanie/colorguard",
     license="MIT",
