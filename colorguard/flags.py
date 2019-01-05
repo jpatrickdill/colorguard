@@ -3,13 +3,13 @@ import inspect
 
 
 # noinspection PyInitNewSignature
-class BitFieldMeta(type):
+class BitFlagMeta(type):
     __fields__ = {}
     __funcs__ = []
     __bit_length__ = 0
 
     def __init__(cls, name, bases, attrs):
-        super(BitFieldMeta, cls).__init__(name, bases, attrs)
+        super(BitFlagMeta, cls).__init__(name, bases, attrs)
 
         bit_pos = 0
 
@@ -37,7 +37,7 @@ class BitFieldMeta(type):
             bit_pos += val
 
 
-class BitField(object, metaclass=BitFieldMeta):
+class BitFlag(object, metaclass=BitFlagMeta):
     __fields__ = {}
     __funcs__ = []
     __bit_length__ = 0
@@ -51,7 +51,7 @@ class BitField(object, metaclass=BitFieldMeta):
             if key not in kwargs:
                 raise KeyError("Missing field {!r}".format(key))
 
-        return _LoadedBitField(cls.__name__, cls.__fields__, cls.__bit_length__, attrs_given=kwargs)
+        return _LoadedBitFlag(cls.__name__, cls.__fields__, cls.__bit_length__, attrs_given=kwargs)
 
     @classmethod
     def from_bits(cls, bits):
@@ -63,8 +63,8 @@ class BitField(object, metaclass=BitFieldMeta):
         for field, props in cls.__fields__.items():
             fields_given[field] = int(bits[props[0]: props[0] + props[1]])
 
-        return _LoadedBitField(cls.__name__, cls.__fields__, cls.__bit_length__, funcs=cls.__funcs__,
-                               attrs_given=fields_given)
+        return _LoadedBitFlag(cls.__name__, cls.__fields__, cls.__bit_length__, funcs=cls.__funcs__,
+                              attrs_given=fields_given)
 
     @classmethod
     def from_bytes(cls, b, byteorder="big"):
@@ -85,7 +85,7 @@ class BitField(object, metaclass=BitFieldMeta):
         return cls.from_bytes(b)
 
 
-class _LoadedBitField(object):
+class _LoadedBitFlag(object):
     def __init__(self, name, fields, bit_length, funcs=None, attrs_given=None):
         self._bits = PaddedBits(0, bit_length)
         self._name = name
