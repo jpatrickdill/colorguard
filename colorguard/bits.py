@@ -43,7 +43,7 @@ class Bits(object):
         return Bits(value)
 
     def to_bytes(self, byteorder="big"):
-        bl = (self.value.bit_length() + 7) // 8
+        bl = (self.value.bit_length() + 7) // 8  # pad bytes
 
         return self.value.to_bytes(bl, byteorder)
 
@@ -273,6 +273,9 @@ class PaddedBits(Bits):
 
     def __str__(self):
         return "0b"+"".join(map(str, iter(self)))
+
+    def __bytes__(self):
+        return self.to_bytes()
 
     def __iter__(self):
         bit_length = self.value.bit_length() if self.value > 0 else 1
