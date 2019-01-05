@@ -11,13 +11,14 @@ incremented.
 https://discordapp.com/developers/docs/reference
 """
 
+
 import sys
+
 sys.path.insert(0, "./../")
 
 from colorguard import BitField
 
 
-# ObjectID class gets processed at runtime
 class ObjectID(BitField):
     """
     Discord Object ID
@@ -29,5 +30,4 @@ class ObjectID(BitField):
     process_id = 5  # 5 bit process ID
 
     increment = 12  # 12 bit incrementing number
-
 
