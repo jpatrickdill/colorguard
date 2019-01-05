@@ -6,8 +6,8 @@ class BitFieldMeta(type):
     __fields__ = {}
     __bit_length__ = 0
 
-    def __init__(cls, name, bases, atts):
-        super(BitFieldMeta, cls).__init__(name, bases, atts)
+    def __init__(cls, name, bases, attrs):
+        super(BitFieldMeta, cls).__init__(name, bases, attrs)
 
         bit_pos = 0
 
