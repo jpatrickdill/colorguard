@@ -10,7 +10,7 @@ Color Guard
 the ``int`` type so no number functionality is lost, while making it possible to index and slice binary numbers
 like strings.
 
-.. image:: _static/colorguard.jpg
+.. image:: https://i.imgur.com/nety2Ty.jpg
    :width: 100%
 
 ---------------------
