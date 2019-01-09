@@ -266,7 +266,7 @@ Now, the size and crust are treated like Enum values.
 
 .. code-block:: pycon
 
-    >>> pizza = Pizza(size=4, pepperoni=1, meat=1, mushrooms=0, crust=0)
+    >>> pizza = Pizza(_size=4, pepperoni=1, meat=1, mushrooms=0, _crust=0)
     >>> pizza.size
     Jumbo
     >>> pizza.crust
