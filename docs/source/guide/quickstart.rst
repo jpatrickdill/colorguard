@@ -66,7 +66,7 @@ For example:
     True
 
 
-Two :class:`Bits` objects can also be concatenated with :meth:`Bits.join`.
+Two :class:`Bits` objects can be concatenated with :meth:`Bits.join`.
 
 .. code-block:: pycon
 
@@ -92,7 +92,7 @@ Bitwise operations also work with :class:`Bits` objects.
 Bit Indexing
 ~~~~~~~~~~~~
 
-:class:`Bits` objects can also be indexed like strings or lists.
+:class:`Bits` objects can be indexed like strings or lists.
 
 .. code-block:: pycon
 
@@ -126,7 +126,7 @@ When setting a slice of bits, the length doesn't have to match.
 Type Conversion
 ~~~~~~~~~~~~~~~
 
-:class:`Bits` objects can be converted to masny other data types.
+:class:`Bits` objects can be converted to many other data types.
 
 .. code-block:: pycon
 
@@ -139,7 +139,7 @@ Type Conversion
     >>> bytes(Bits(7))
     b'\x07'
 
-If you want to specify the byte order, use :meth:`Bits.to_bytes` instead of the ``bytes`` function.
+If you want to specify byte order, use :meth:`Bits.to_bytes` instead of the ``bytes`` function.
 
 .. code-block:: pycon
 
@@ -150,8 +150,8 @@ PaddedBits
 ----------
 
 Sometimes, it's useful to limit the number of bits in a number. The :class:`PaddedBits` class has
-the same functionality as the :class:`Bits` class, but if any operations result in a number greater
-than the set bit length, an error is raised.
+the same functionality as the :class:`Bits` class, but limits the bit length when performing math
+operations.
 
 The string and list representation of the number is also padded to match the set bit length.
 
@@ -173,7 +173,7 @@ bit length, an error will be raised.
     >>> b.bits = 2
     Traceback (most recent call last):
       File "<input>", line 1, in <module>
-      File "~/PycharmProjects/colorguard/colorguard/bits.py", line 291, in bits
+      File "~/colorguard/colorguard/bits.py", line 291, in bits
         raise ValueError("current value {} doesn't fit in {} bits".format(self.value, value))
     ValueError: current value 5 doesn't fit in 2 bits
 
@@ -181,14 +181,14 @@ BitFlags
 --------
 
 Bit flags allow you to squeeze multiple fields into one, longer number. The fields don't even
-have to be numbers, they also represent booleans or enums.
+have to be numbers, they can represent booleans or enumerations.
 
 Bit flags are created in colorguard by inheriting from the :class:`BitFlag` class.
 
 .. code-block:: python
 
     class Pizza(BitFlag):
-        size = 3  # "size" is a 3 bit field
+        size = 3  # 3 bit field
 
         pepperoni = 1  # 1 bit boolean
         meat = 1  # 1 bit boolean
@@ -197,7 +197,7 @@ Bit flags are created in colorguard by inheriting from the :class:`BitFlag` clas
         crust = 2  # 2 bit field
 
 This bit flag could be used to describe a pizza. When using the bit flag directly, you just
-pass some values.
+pass values.
 
 .. code-block:: pycon
 
