@@ -27,6 +27,7 @@ class Bits(object):
 
     :param int value: Value to initialize with
     """
+
     def __init__(self, value=0):
         self._value = int(value)
 
@@ -153,8 +154,9 @@ class Bits(object):
                 start = self.value.bit_length() + start
 
             span = stop - start
-            if span <= 0:
-                return Bits(0)
+            if span <= 0:  # negative span, get reversed value
+                return self[stop:start]
+                # return Bits(0)
 
             mask = 2 ** span - 1
 
@@ -533,7 +535,7 @@ class PaddedBits(Bits):
             mask_shift = self.bits - stop
             mask <<= mask_shift
 
-            return PaddedBits((self.value & mask) >> mask_shift, span)
+            return Bits((self.value & mask) >> mask_shift)
 
         elif not isinstance(item, float):
             item = int(item)
@@ -544,7 +546,7 @@ class PaddedBits(Bits):
             if item >= self.bits:
                 raise KeyError("bit {} not in range for {!r}".format(item, self))
 
-            return PaddedBits(list(self)[item], 1)
+            return Bits(list(self)[item])
 
     def __setitem__(self, item, value):
         if type(value) in (list, tuple):  # list of bits given
