@@ -64,7 +64,7 @@ class BitFlag(object, metaclass=BitFlagMeta):
     Skeleton class for custom bit flags. When called, a :class:`flags._LoadedBitFlag` is actually returned, as this
     class is only used to define bit flags.
 
-    :param \*\*kwargs: Fields to populate the bit flag with. Each field MUST be specified.
+    :param \\*\\*kwargs: Fields to populate the bit flag with. Each field MUST be specified.
 
     :returns: :class:`flags._LoadedBitFlag`
     """
@@ -204,7 +204,7 @@ class _LoadedBitFlag(object):
         """
         Updates bit fields with new values.
 
-        :param \*\*kwargs: Values to update with.
+        :param \\*\\*kwargs: Values to update with.
         """
         for k, v in kwargs.items():
             self[k] = v

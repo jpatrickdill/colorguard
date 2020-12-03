@@ -155,8 +155,7 @@ class Bits(object):
 
             span = stop - start
             if span <= 0:  # negative span, get reversed value
-                return self[stop:start]
-                # return Bits(0)
+                return Bits(0)
 
             mask = 2 ** span - 1
 
@@ -322,6 +321,12 @@ class PaddedBits(Bits):
     """
 
     def __init__(self, value, bit_length=None):
+        if value.bit_length() > bit_length:
+            raise ValueError("{!r} doesn't fit in {} bits".format(value, bit_length))
+
+        if value < 0:
+            raise ValueError("value must be >= 0")
+
         super().__init__(value=value)
 
         self._value = value
@@ -394,7 +399,8 @@ class PaddedBits(Bits):
 
     def bit_length(self):
         """
-        Returns maximum number of bits in the value
+        Returns maximum number of bits in the value. For the actual
+        value bit length, use `bits.value.bit_length()`
 
         :returns: int
         """
